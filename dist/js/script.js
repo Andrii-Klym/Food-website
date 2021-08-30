@@ -1,10 +1,10 @@
 "use strict"
 
-window.addEventListener('DOMContentLoaded', () => { 
+window.addEventListener('DOMContentLoaded', () => {
     //Tabs
     const tabs = document.querySelectorAll('.tabheader__item'),
-          tabsContent = document.querySelectorAll('.tabcontent'),
-          tabsParent = document.querySelector('.tabheader__items');
+        tabsContent = document.querySelectorAll('.tabcontent'),
+        tabsParent = document.querySelector('.tabheader__items');
 
     function hideTabContent() {
         tabsContent.forEach(item => {
@@ -36,17 +36,17 @@ window.addEventListener('DOMContentLoaded', () => {
                     showTabContent(i);
                 }
             })
-        } 
+        }
     })
     //Timer
-    const deadLine = '2021-07-28';
+    const deadLine = '2021-09-15';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
-              days = Math.floor(t / (1000 * 60 * 60 * 24)),
-              hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-              minutes = Math.floor((t / 1000 / 60) % 60),
-              seconds = Math.floor((t / 1000) % 60);
+            days = Math.floor(t / (1000 * 60 * 60 * 24)),
+            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
+            minutes = Math.floor((t / 1000 / 60) % 60),
+            seconds = Math.floor((t / 1000) % 60);
 
         return {
             'total': t,
@@ -64,15 +64,15 @@ window.addEventListener('DOMContentLoaded', () => {
             return num;
         }
     }
-    
+
     function setClock(seclector, endtime) {
         const timer = document.querySelector(seclector),
-              days = timer.querySelector('#days'),
-              hours = timer.querySelector('#hours'),
-              minutes = timer.querySelector('#minutes'),
-              seconds = timer.querySelector('#seconds'),
-              timeInterval = setInterval(updateClock, 1000);
-        
+            days = timer.querySelector('#days'),
+            hours = timer.querySelector('#hours'),
+            minutes = timer.querySelector('#minutes'),
+            seconds = timer.querySelector('#seconds'),
+            timeInterval = setInterval(updateClock, 1000);
+
         updateClock();
 
         function updateClock() {
@@ -95,45 +95,45 @@ window.addEventListener('DOMContentLoaded', () => {
     //Modal
 
     const modalTrigger = document.querySelectorAll('[data-modal]'),
-          modal = document.querySelector('.modal'),
-          modalCloseBtn = document.querySelector('[data-close]');
-        
+        modal = document.querySelector('.modal'),
+        modalCloseBtn = document.querySelector('[data-close]');
+
     function closeModal() {
         modal.classList.add('hide');
         modal.classList.remove('show');
         document.body.style.overflow = '';
     };
-    
+
     function openModal() {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden';
         clearInterval(modalTimerId);
-        
+
     }
 
-    modalTrigger.forEach ( btn => {
+    modalTrigger.forEach(btn => {
         btn.addEventListener('click', openModal);
     });
 
     modalCloseBtn.addEventListener('click', closeModal);
 
-    modal.addEventListener('click', (e) =>{
-        if( e.target === modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
             closeModal();
         }
     });
 
-    document.addEventListener('keydown', (e) =>{
-        if( e.code === "Escape" && modal.classList.contains('show')) {
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "Escape" && modal.classList.contains('show')) {
             closeModal();
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 3000);
- 
+    // const modalTimerId = setTimeout(openModal, 3000);
+
     function showModalByScroll() {
-        if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
             openModal();
             window.removeEventListener('scroll', showModalByScroll);
         }
@@ -141,6 +141,77 @@ window.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', showModalByScroll);
 
+    // Class for cards
+
+    class MenuCard {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
+            this.classes = classes;
+            this.parent = document.querySelector(parentSelector);
+            this.transfer = 27;
+            this.changeToUAH();
+        }
+
+        changeToUAH() {
+            this.price = this.price * this.transfer;
+        }
+
+        render() {
+            const element = document.createElement('div');
+
+            if(this.classes.length === 0) {
+                this.element = 'menu__item';
+                element.classList.add(this.element);
+            } else {
+                this.classes.forEach(className => element.classList.add(className));
+            }
+            
+            element.innerHTML = `
+                <img src=${this.src} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                <div class="menu__item-descr">${this.descr}</div>
+                <div class="menu__item-divider"></div>
+                <div; class="menu__item-price">
+                    <div class="menu__item-cost">Ціна:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div',
+                'menu__item',
+                'big'
+             `;
+            this.parent.append(element);
+        }
+    }
+
+    new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фітнес"',
+        'Меню "Фітнес" - це новий підхід до приготування блюд: більше свіжих овочів і фруктів. Продукт активних і здорових людей. Це абсолюто новий продукт з оптимальною ціною і вискокою якістю!',
+        9,
+        '.menu .container'
+    ).render();
+
+    new MenuCard(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню “Преміум”',
+        'В меню "Преміум" ми використовуємо не тільки гарний дизайн упаковки, але і якісне виконання страв. Червона риба, морепродукти, фрукти - ресторанне меню без походу в ресторан!',
+        14,
+        '.menu .container'
+    ).render();
+
+    new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Пісне"',
+        'Меню "Пісне" - це ретельний підбір інгредієнтів: повна відсутність продуктів тваринного походження, молоко з мигдалю, вівса, кокоса або гречки, правильна кількість білків за рахунок тофу і імпортних вегетаріанських стейків.',
+        21,
+        '.menu .container'
+    ).render();
 
 
 
@@ -151,15 +222,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-}); 
 
-
-
-
-
-
-
-
-
-
-
+});
